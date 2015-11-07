@@ -36,6 +36,9 @@ var doorLeftOpen;
 var doorRightOpen;
 var doorRightClosed;
 
+var YES = true;
+var NO = false;
+
 var questions = [];
 var currentQuestionIndex = 0;
 
@@ -51,21 +54,52 @@ function addQuestion(image, answer) {
 
 }
 
+function goToNextQuestion() {
+  currentQuestionIndex = currentQuestionIndex + 1;
+}
+
+// Left Door = YES
+function doorLeftClicked() {
+  var currentQuestion = questions[currentQuestionIndex];
+  if (currentQuestion.answer === YES) {
+    console.log('CORRECT');
+  }
+  else {
+    console.log('INCORRECT');
+  }
+  goToNextQuestion();
+}
+
+// Right Door = NO
+function doorRightClicked() {
+  var currentQuestion = questions[currentQuestionIndex];
+  if (currentQuestion.answer === NO) {
+    console.log('CORRECT');
+  }
+  else {
+    console.log('INCORRECT');
+  }
+  goToNextQuestion();
+}
+
 function create() {
   console.log('create')
 
   var gameWidth = game.world.width;
   var gameHeight = game.world.height;
+
   game.add.sprite(0, 0, 'background');
+
   doorLeftClosed = game.add.sprite(DOOR_LEFT_X, DOOR_LEFT_Y, 'doorLeftClosed');
-  doorLeftOpen = game.add.sprite(DOOR_LEFT_X, DOOR_LEFT_Y, 'doorLeftOpen');
   doorRightClosed = game.add.sprite(DOOR_RIGHT_X, DOOR_RIGHT_Y, 'doorRightClosed');
-  doorRightOpen = game.add.sprite(DOOR_RIGHT_X, DOOR_RIGHT_Y, 'doorRightOpen');
+
+  doorLeftOpen = game.add.button(DOOR_LEFT_X, DOOR_LEFT_Y, 'doorLeftOpen', doorLeftClicked);
+  doorRightOpen = game.add.button(DOOR_RIGHT_X, DOOR_RIGHT_Y, 'doorRightOpen', doorRightClicked);
   // console.log(doorLeftClosed);
 
-  addQuestion('q1', false);
-  addQuestion('q2', true);
-  addQuestion('q3', false);
+  addQuestion('q1', NO);
+  addQuestion('q2', YES);
+  addQuestion('q3', NO);
 
 }
 
@@ -77,7 +111,19 @@ function showQuestion(index){
   currentQuestion.sprite.visible = true;
 }
 
+var gameEnded = false;
+
 function update() {
+
+  if (gameEnded) {
+    return;
+  }
+
+  if (currentQuestionIndex >= questions.length) {
+    console.log('You Escaped!');
+    gameEnded = true
+    return;
+  }
 
   showQuestion(currentQuestionIndex);
 
@@ -108,8 +154,10 @@ function update() {
 
   doorRightOpen.visible = isMouseOverRightDoor;
 
-  if (game.input.mousePointer.isDown){
-    currentQuestionIndex = currentQuestionIndex + 1;
-  }
+  // console.log(game.input.mousePointer);
+  // if (game.input.mousePointer.isDown){
+  //   currentQuestionIndex = currentQuestionIndex + 1;
+  //   console.log(currentQuestionIndex);
+  // }
 
 }
