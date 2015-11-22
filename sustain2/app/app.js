@@ -7,6 +7,7 @@ var game = new Phaser.Game(
 );
 
 function preload() {
+  game.load.image('start', 'assets/images/start.jpg');
   game.load.image('background', 'assets/images/background.jpg');
   game.load.image('doorLeftClosed', 'assets/images/door-left-closed.jpg');
   game.load.image('doorLeftOpen', 'assets/images/door-left-open.jpg');
@@ -38,6 +39,7 @@ var doorRightOpen;
 var doorRightClosed;
 var bars;
 var win;
+var start;
 
 var YES = true;
 var NO = false;
@@ -89,6 +91,10 @@ function doorRightClicked() {
   }
 }
 
+function startGameClicked() {
+  start.visible = false;
+}
+
 function create() {
 
   var gameWidth = game.world.width;
@@ -108,6 +114,7 @@ function create() {
 
   win = game.add.sprite(0, 0, 'win');
   bars = game.add.sprite(0, 0, 'bars');
+  start = game.add.button(0, 0, 'start', startGameClicked);
 
   win.visible = false;
   bars.visible = false;
