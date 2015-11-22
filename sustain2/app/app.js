@@ -19,6 +19,13 @@ function preload() {
   game.load.image('q1', 'assets/questions/q1.png');
   game.load.image('q2', 'assets/questions/q2.png');
   game.load.image('q3', 'assets/questions/q3.png');
+  game.load.image('q4', 'assets/questions/q4.png');
+  game.load.image('q5', 'assets/questions/q5.png');
+  game.load.image('q6', 'assets/questions/q6.png');
+  game.load.image('q7', 'assets/questions/q7.png');
+  game.load.image('q8', 'assets/questions/q8.png');
+  game.load.image('q9', 'assets/questions/q9.png');
+  game.load.image('q10', 'assets/questions/q10.png');
 
 }
 
@@ -111,6 +118,13 @@ function create() {
   addQuestion('q1', NO);
   addQuestion('q2', YES);
   addQuestion('q3', NO);
+  addQuestion('q4', YES);
+  addQuestion('q5', YES);
+  addQuestion('q6', NO);
+  addQuestion('q7', YES);
+  addQuestion('q8', YES);
+  addQuestion('q9', NO);
+  addQuestion('q10', YES);
 
   win = game.add.sprite(0, 0, 'win');
   bars = game.add.sprite(0, 0, 'bars');
