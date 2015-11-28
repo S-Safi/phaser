@@ -27,6 +27,11 @@ function preload() {
   game.load.image('q9', 'assets/questions/q9.png');
   game.load.image('q10', 'assets/questions/q10.png');
 
+  game.load.audio('play', 'assets/sounds/Robot_blip-Marianne_Gagnon-120342607.wav');
+  game.load.audio('doorOpen', 'assets/sounds/Metal-Bang-SoundBible.com-672025076.wav');
+  game.load.audio('gameFail', 'assets/sounds/Close-Vault-Or-Jail-Door-SoundBible.com-1221913084.wav');
+  game.load.audio('gameWin', 'assets/sounds/One-Piece-Franky-Theme-EXTENDED-Long-Version.mp3');
+
 }
 
 var DOOR_LEFT_X = 148;
@@ -100,6 +105,7 @@ function doorRightClicked() {
 
 function startGameClicked() {
   start.visible = false;
+  game.sound.play('play');
 }
 
 function create() {
@@ -158,14 +164,27 @@ function showGameLost() {
   gameEnded();
 }
 
+var allowLeftDoorOpenSound = true;
+var allowRightDoorOpenSound = true;
+var allowGameFailSound = true;
+var allowGameWinSound = true;
+
 function update() {
 
   if (gameWon) {
+    if (allowGameWinSound) {
+      game.sound.play('gameWin');
+      allowGameWinSound = false;
+    }
     showGameWon();
     return;
   }
 
   if (gameLost) {
+    if (allowGameFailSound) {
+      game.sound.play('gameFail');
+      allowGameFailSound = false;
+    }
     showGameLost();
     return;
   }
@@ -182,6 +201,16 @@ function update() {
 
   var isMouseOverLeftDoor = isPointInRectangle(mousex, mousey, rx1Left, ry1Left, rx2Left, ry2Left);
 
+  if (isMouseOverLeftDoor) {
+    if (allowLeftDoorOpenSound && start.visible === false) {
+      game.sound.play('doorOpen');
+      allowLeftDoorOpenSound = false;
+    }
+  }
+  else {
+    allowLeftDoorOpenSound = true;
+  }
+
   doorLeftOpen.visible = isMouseOverLeftDoor;
 
   var rx1Right = DOOR_RIGHT_X;
@@ -190,6 +219,16 @@ function update() {
   var ry2Right = DOOR_RIGHT_Y + DOOR_HEIGHT;
 
   var isMouseOverRightDoor = isPointInRectangle(mousex, mousey, rx1Right, ry1Right, rx2Right, ry2Right);
+
+  if (isMouseOverRightDoor) {
+    if (allowRightDoorOpenSound && start.visible === false) {
+      game.sound.play('doorOpen');
+      allowRightDoorOpenSound = false;
+    }
+  }
+  else {
+    allowRightDoorOpenSound = true;
+  }
 
   doorRightOpen.visible = isMouseOverRightDoor;
 
