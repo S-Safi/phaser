@@ -7,38 +7,35 @@ var game = new Phaser.Game(
 );
 
 function preload() {
-  game.load.image('level1Background', 'assets/levels/test3.png');
-  game.load.image('player', 'assets/player/derp-ssundee.png');
-  game.load.image('wall', 'assets/backgrounds/tile.png');
+  game.load.image('player', 'assets/entities/player/derp-ssundee.png');
+  game.load.image('enemy','assets/entities/enemies/crainer.png');
 
   game.load.tilemap('test', 'assets/levels/test.json', null, Phaser.Tilemap.TILED_JSON);
   game.load.image('tiles', 'assets/tiles/tiles.png');
 
 }
 
-var SPEED = 50;
+var SPEED = 90;
 
-var walls;
 var player;
+var playerStart = {
+  x: 64,
+  y: 64,
+};
+
 var gameWidth;
 var gameHeight;
 var cursors;
 var map;
 var layer;
+var enemy1;
+var enemy2;
+var enemy3;
 
 function create() {
 
   gameWidth = game.world.width;
   gameHeight = game.world.height;
-  //background = game.add.sprite(200, 0, 'level1Background');
-
-
-  //game.add.sprite(300, 200, 'backgroundTile');
-
-  //walls = game.add.group();
-
-  //var wall1 = walls.create(20, 20, 'wall')
-  //wall1.scale.setTo(560, 80);
 
   map = game.add.tilemap('test');
   map.addTilesetImage('tiles', 'tiles');
@@ -47,21 +44,31 @@ function create() {
 
   map.setCollision(1);
 
-  player = game.add.sprite(64, 64, 'player');
+  enemy1 = game.add.sprite(64*5-16, 64*6-16, 'enemy');
+  enemy2 = game.add.sprite(64*2-16, 64*3-16, 'enemy');
+  enemy3 = game.add.sprite(64*7-16, 64 + 48, 'enemy');
+
+  player = game.add.sprite(playerStart.x, playerStart.y, 'player');
 
   game.physics.arcade.enable(player);
-  //game.physics.arcade.enable(background);
+  game.physics.arcade.enable(enemy1);
+  game.physics.arcade.enable(enemy2);
+  game.physics.arcade.enable(enemy3);
 
+  enemy1.body.immovable = true;
+  enemy2.body.immovable = true;
+  enemy3.body.immovable = true;
   player.body.collideWorldBounds = true;
 
   cursors = game.input.keyboard.createCursorKeys();
 
 }
 
-//var xDir = 1;
-// var yDir = -1;
-// var xSpeed = 2;
-// var ySpeed = 2;
+function collisionHandler (player, enemy) {
+  console.log('CRASH');
+  player.body.x = playerStart.x;
+  player.body.y = playerStart.y;
+}
 
 function update() {
 
@@ -85,28 +92,9 @@ function update() {
     player.body.velocity.y = 0;
   }
 
-  // game.physics.arcade.collide(player, background);
-
-
-  //player.y = player.y + yDir * ySpeed;
-  //player.x = player.x + xDir * xSpeed;
-
-  // if (player.x + player.width > gameWidth - 1) {
-  //   xDir = -1;
-  // }
-  //
-  // if (player.x < 0 + 1) {
-  //   xDir = 1;
-  // }
-  //
-  // if (player.y + player.height > gameHeight - 1) {
-  //   yDir = -1;
-  // }
-  //
-  // if (player.y < 0 + 1) {
-  //   yDir = 1;
-  // }
-
-  game.physics.arcade.collide(player, layer)
+  game.physics.arcade.collide(player, layer);
+  game.physics.arcade.collide(player, enemy1, collisionHandler, null, this);
+  game.physics.arcade.collide(player, enemy2, collisionHandler, null, this);
+  game.physics.arcade.collide(player, enemy3, collisionHandler, null, this);
 
 }
