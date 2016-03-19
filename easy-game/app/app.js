@@ -8,7 +8,8 @@ var game = new Phaser.Game(
 
 function preload() {
   game.load.image('player', 'assets/entities/player/derp-ssundee.png');
-  game.load.image('enemy','assets/entities/enemies/crainer.png');
+  game.load.image('crainer','assets/entities/enemies/crainer.png');
+  game.load.image('evil','assets/entities/enemies/enemy-evil.jpg');
 
   game.load.tilemap('test', 'assets/levels/test.json', null, Phaser.Tilemap.TILED_JSON);
   game.load.image('tiles', 'assets/tiles/tiles.png');
@@ -28,9 +29,97 @@ var gameHeight;
 var cursors;
 var map;
 var layer;
-var enemy1;
-var enemy2;
-var enemy3;
+var enemies;
+
+function createEnemies() {
+
+  enemies = [];
+
+  enemies.push({
+    type: 'crainer',
+    speed: 90,
+    direction: 'vertical',
+    boundary: {
+      top: 64,
+      bottom: 64*7,
+    },
+    start: {
+      x: 64*2-16,
+      y: 64*3-16,
+    },
+  });
+
+  enemies.push({
+    type: 'crainer',
+    speed: 90,
+    direction: 'horizontal',
+    boundary: {
+      left: 64,
+      right: 64*9,
+    },
+    start: {
+      x: 64*5-16,
+      y: 64*6-16,
+    },
+  });
+
+  enemies.push({
+    type: 'crainer',
+    speed: 90,
+    direction: 'horizontal',
+    boundary: {
+      left: 64*6,
+      right: 64*9,
+    },
+    start: {
+      x: 64*6,
+      y: 64 + 16,
+    },
+  });
+
+  enemies.push({
+    type: 'evil',
+    speed: 45,
+    direction: 'horizontal',
+    boundary: {
+      left: 64,
+      right: 64*9,
+      top:64,
+      bottom:64*9,
+    },
+    start: {
+      x: 64*7,
+      y: 64*4,
+    },
+  });
+
+  enemies.push({
+    type: 'crainer',
+    speed: 45,
+    direction: 'horizontal',
+    boundary: {
+      left: 64*4,
+      right: 64*6,
+    },
+    start: {
+      x: 64*4,
+      y: 64 + 16,
+    },
+  });
+
+  enemies.forEach(
+    function(enemy) {
+      enemy.sprite = game.add.sprite(enemy.start.x, enemy.start.y, enemy.type);
+      game.physics.arcade.enable(enemy.sprite);
+      if (enemy.direction === 'horizontal') {
+        enemy.sprite.body.velocity.x = enemy.speed;
+      }
+      if (enemy.direction === 'vertical') {
+        enemy.sprite.body.velocity.y = enemy.speed;
+      }
+    }
+  );
+}
 
 function create() {
 
@@ -44,54 +133,11 @@ function create() {
 
   map.setCollision(1);
 
-  enemy1 = {
-    speed: 90,
-    direction: 'vertical',
-    boundary: {
-      top: 64,
-      bottom: 64*7,
-    },
-  };
-
-  enemy1.sprite = game.add.sprite(64*2-16, 64*3-16, 'enemy');
-  game.physics.arcade.enable(enemy1.sprite);
-  enemy1.sprite.body.velocity.y = enemy1.speed;
-
-  enemy2 = {
-    speed: 90,
-    direction: 'horizontal',
-    boundary: {
-      left: 64,
-      right: 64*9,
-    },
-  };
-
-  enemy2.sprite = game.add.sprite(64*5-16, 64*6-16, 'enemy');
-  game.physics.arcade.enable(enemy2.sprite);
-  enemy2.sprite.body.velocity.x = enemy2.speed;
-
-  enemy3 = {
-    speed: 90,
-    direction: 'horizontal',
-    boundary: {
-      left: 64*4,
-      right: 64*9,
-    },
-  };
-
-  enemy3.sprite = game.add.sprite(64*6 + 16, 64 + 16, 'enemy');
-  game.physics.arcade.enable(enemy3.sprite);
-  enemy3.sprite.body.velocity.x = enemy3.speed;
+  createEnemies();
 
   player = game.add.sprite(playerStart.x, playerStart.y, 'player');
 
   game.physics.arcade.enable(player);
-  game.physics.arcade.enable(enemy2.sprite);
-  game.physics.arcade.enable(enemy3.sprite);
-
-  //enemy1.sprite.body.immovable = true;
-  //enemy2.sprite.body.immovable = true;
-  //enemy3.sprite.body.immovable = true;
 
   player.body.collideWorldBounds = true;
 
@@ -107,9 +153,11 @@ function collisionHandler (player, enemy) {
 
 function checkCollisions() {
   game.physics.arcade.collide(player, layer);
-  game.physics.arcade.overlap(player, enemy1.sprite, collisionHandler, null, this);
-  game.physics.arcade.overlap(player, enemy2.sprite, collisionHandler, null, this);
-  game.physics.arcade.overlap(player, enemy3.sprite, collisionHandler, null, this);
+  enemies.forEach(
+    function (enemy) {
+      game.physics.arcade.overlap(player, enemy.sprite, collisionHandler, null, this);
+    }
+  );
 
 }
 
@@ -137,26 +185,27 @@ function updatePlayer() {
 }
 
 function updateEnemies() {
-  if (enemy1.sprite.body.y >= (enemy1.boundary.bottom - enemy1.sprite.height)) {
-    enemy1.sprite.body.velocity.y = -enemy1.speed;
-  }
-  else if (enemy1.sprite.body.y <= enemy1.boundary.top) {
-    enemy1.sprite.body.velocity.y = enemy1.speed;
-  }
 
-  if (enemy2.sprite.body.x >= (enemy2.boundary.right - enemy2.sprite.width)) {
-    enemy2.sprite.body.velocity.x = -enemy2.speed;
-  }
-  else if (enemy2.sprite.body.x <= enemy2.boundary.left) {
-    enemy2.sprite.body.velocity.x = enemy2.speed;
-  }
-
-  if (enemy3.sprite.body.x >= (enemy3.boundary.right - enemy3.sprite.width)) {
-    enemy3.sprite.body.velocity.x = -enemy3.speed;
-  }
-  else if (enemy3.sprite.body.x <= enemy3.boundary.left) {
-    enemy3.sprite.body.velocity.x = enemy3.speed;
-  }
+  enemies.forEach(
+    function (enemy) {
+      if (enemy.direction === 'vertical') {
+        if (enemy.sprite.body.y >= (enemy.boundary.bottom - enemy.sprite.height)) {
+          enemy.sprite.body.velocity.y = -enemy.speed;
+        }
+        else if (enemy.sprite.body.y <= enemy.boundary.top) {
+          enemy.sprite.body.velocity.y = enemy.speed;
+        }
+      }
+      if (enemy.direction === 'horizontal') {
+        if (enemy.sprite.body.x >= (enemy.boundary.right - enemy.sprite.width)) {
+          enemy.sprite.body.velocity.x = -enemy.speed;
+        }
+        else if (enemy.sprite.body.x <= enemy.boundary.left) {
+          enemy.sprite.body.velocity.x = enemy.speed;
+        }
+      }
+    }
+  );
 }
 
 function update() {
