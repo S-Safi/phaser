@@ -13,6 +13,7 @@ function preload() {
 
   game.load.tilemap('test', 'assets/levels/test.json', null, Phaser.Tilemap.TILED_JSON);
   game.load.image('tiles', 'assets/tiles/tiles.png');
+  game.load.image('endTile', 'assets/entities/tiles/gold.png');
 
 }
 
@@ -30,6 +31,7 @@ var cursors;
 var map;
 var layer;
 var enemies;
+var endTile;
 
 function createEnemies() {
 
@@ -37,7 +39,7 @@ function createEnemies() {
 
   enemies.push({
     type: 'crainer',
-    speed: 90,
+    speed: 99,
     direction: 'vertical',
     boundary: {
       top: 64,
@@ -51,7 +53,7 @@ function createEnemies() {
 
   enemies.push({
     type: 'crainer',
-    speed: 90,
+    speed: 99,
     direction: 'horizontal',
     boundary: {
       left: 64,
@@ -59,27 +61,27 @@ function createEnemies() {
     },
     start: {
       x: 64*5-16,
-      y: 64*6-16,
+      y: 64*6+16,
     },
   });
 
   enemies.push({
     type: 'crainer',
-    speed: 90,
+    speed: 99,
     direction: 'horizontal',
     boundary: {
-      left: 64*6,
+      left: 64*7,
       right: 64*9,
     },
     start: {
-      x: 64*6,
+      x: 64*7,
       y: 64 + 16,
     },
   });
 
   enemies.push({
     type: 'evil',
-    speed: 45,
+    speed: 99,
     direction: 'horizontal',
     boundary: {
       left: 64,
@@ -95,7 +97,7 @@ function createEnemies() {
 
   enemies.push({
     type: 'crainer',
-    speed: 45,
+    speed: 99,
     direction: 'horizontal',
     boundary: {
       left: 64*4,
@@ -135,27 +137,36 @@ function create() {
 
   createEnemies();
 
+  endTile = game.add.sprite(64*5, 64*3, 'endTile');
   player = game.add.sprite(playerStart.x, playerStart.y, 'player');
 
   game.physics.arcade.enable(player);
-
+  game.physics.arcade.enable(endTile);
+  
   player.body.collideWorldBounds = true;
 
   cursors = game.input.keyboard.createCursorKeys();
 
 }
 
-function collisionHandler (player, enemy) {
+function enemyCollisionHandler (player, enemy) {
   console.log('CRASH');
+  player.body.x = playerStart.x;
+  player.body.y = playerStart.y;
+}
+
+function portalCollisionHandler (player, endTile) {
+  console.log('(confetti)');
   player.body.x = playerStart.x;
   player.body.y = playerStart.y;
 }
 
 function checkCollisions() {
   game.physics.arcade.collide(player, layer);
+  game.physics.arcade.overlap(player, endTile, portalCollisionHandler, null, this);
   enemies.forEach(
     function (enemy) {
-      game.physics.arcade.overlap(player, enemy.sprite, collisionHandler, null, this);
+      game.physics.arcade.overlap(player, enemy.sprite, enemyCollisionHandler, null, this);
     }
   );
 
