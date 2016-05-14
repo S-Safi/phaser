@@ -6,12 +6,44 @@ var game = new Phaser.Game(
   { preload: preload, create: create, update: update }
 );
 
+var levels;
+var currentLevel;
+
+function createLevels() {
+
+  levels = [];
+
+  var level1 = {};
+
+  level1.map = game.add.tilemap('level1');
+  level1.map.addTilesetImage('tiles', 'tiles');
+  level1.layer = level1.map.createLayer('Tile Layer 1');
+  level1.layer.resizeWorld();
+
+  level1.map.setCollision(1);
+
+  createEnemiesLevel1(level1);
+
+  level1.endTile = game.add.sprite(64*5, 64*3, 'endTile');
+  level1.playerStart = {
+    x:64,
+    y:64,
+  };
+
+  game.physics.arcade.enable(level1.endTile);
+
+  levels.push(level1);
+
+  currentLevel = levels[0];
+
+}
+
 function preload() {
   game.load.image('player', 'assets/entities/player/derp-ssundee.png');
   game.load.image('crainer','assets/entities/enemies/crainer.png');
   game.load.image('evil','assets/entities/enemies/enemy-evil.jpg');
 
-  game.load.tilemap('test', 'assets/levels/test.json', null, Phaser.Tilemap.TILED_JSON);
+  game.load.tilemap('level1', 'assets/levels/level1.json', null, Phaser.Tilemap.TILED_JSON);
   game.load.image('tiles', 'assets/tiles/tiles.png');
   game.load.image('endTile', 'assets/entities/tiles/gold.png');
 
@@ -30,12 +62,11 @@ var gameHeight;
 var cursors;
 var map;
 var layer;
-var enemies;
 var endTile;
 
-function createEnemies() {
+function createEnemiesLevel1(level1) {
 
-  enemies = [];
+  var enemies = [];
 
   enemies.push({
     type: 'crainer',
@@ -121,31 +152,25 @@ function createEnemies() {
       }
     }
   );
+
+  level1.enemies = enemies;
 }
 
 function create() {
 
   gameWidth = game.world.width;
   gameHeight = game.world.height;
+  
+  createLevels();
 
-  map = game.add.tilemap('test');
-  map.addTilesetImage('tiles', 'tiles');
-  layer = map.createLayer('Tile Layer 1');
-  layer.resizeWorld();
-
-  map.setCollision(1);
-
-  createEnemies();
-
-  endTile = game.add.sprite(64*5, 64*3, 'endTile');
   player = game.add.sprite(playerStart.x, playerStart.y, 'player');
 
   game.physics.arcade.enable(player);
-  game.physics.arcade.enable(endTile);
-  
+
   player.body.collideWorldBounds = true;
 
   cursors = game.input.keyboard.createCursorKeys();
+
 
 }
 
@@ -161,10 +186,10 @@ function portalCollisionHandler (player, endTile) {
   player.body.y = playerStart.y;
 }
 
-function checkCollisions() {
-  game.physics.arcade.collide(player, layer);
-  game.physics.arcade.overlap(player, endTile, portalCollisionHandler, null, this);
-  enemies.forEach(
+function checkCollisions(level) {
+  game.physics.arcade.collide(player, level.layer);
+  game.physics.arcade.overlap(player, level.endTile, portalCollisionHandler, null, this);
+  level.enemies.forEach(
     function (enemy) {
       game.physics.arcade.overlap(player, enemy.sprite, enemyCollisionHandler, null, this);
     }
@@ -195,9 +220,9 @@ function updatePlayer() {
 
 }
 
-function updateEnemies() {
+function updateEnemies(level) {
 
-  enemies.forEach(
+  level.enemies.forEach(
     function (enemy) {
       if (enemy.direction === 'vertical') {
         if (enemy.sprite.body.y >= (enemy.boundary.bottom - enemy.sprite.height)) {
@@ -219,9 +244,10 @@ function updateEnemies() {
   );
 }
 
+
 function update() {
 
   updatePlayer();
-  updateEnemies();
-  checkCollisions();
+  updateEnemies(currentLevel);
+  checkCollisions(currentLevel);
 }
