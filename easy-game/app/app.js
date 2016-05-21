@@ -13,6 +13,8 @@ function createLevels() {
 
   levels = [];
 
+  // Level 1
+
   var level1 = {};
 
   level1.map = game.add.tilemap('level1');
@@ -20,7 +22,7 @@ function createLevels() {
   level1.layer = level1.map.createLayer('Tile Layer 1');
   level1.layer.resizeWorld();
 
-  level1.map.setCollision(1);
+  level1.map.setCollision([1,3,4]);
 
   createEnemiesLevel1(level1);
 
@@ -34,7 +36,30 @@ function createLevels() {
 
   levels.push(level1);
 
-  currentLevel = levels[0];
+  // Level 2
+
+  var level2 = {};
+
+  level2.map = game.add.tilemap('level2');
+  level2.map.addTilesetImage('tiles', 'tiles');
+  level2.layer = level2.map.createLayer('Tile Layer 1');
+  level2.layer.resizeWorld();
+
+  level2.map.setCollision([1,3,4]);
+
+  createEnemiesLevel2(level2);
+
+  level2.endTile = game.add.sprite(64*8, 64*1, 'endTile');
+  level2.playerStart = {
+    x:64,
+    y:64,
+  };
+
+  game.physics.arcade.enable(level2.endTile);
+
+  levels.push(level2);
+
+  currentLevel = levels[1];
 
 }
 
@@ -44,12 +69,13 @@ function preload() {
   game.load.image('evil','assets/entities/enemies/enemy-evil.jpg');
 
   game.load.tilemap('level1', 'assets/levels/level1.json', null, Phaser.Tilemap.TILED_JSON);
+  game.load.tilemap('level2', 'assets/levels/level2.json', null, Phaser.Tilemap.TILED_JSON);
   game.load.image('tiles', 'assets/tiles/tiles.png');
   game.load.image('endTile', 'assets/entities/tiles/gold.png');
 
 }
 
-var PLAYER_SPEED = 90;
+var PLAYER_SPEED = 95;
 
 var player;
 var playerStart = {
@@ -70,7 +96,7 @@ function createEnemiesLevel1(level1) {
 
   enemies.push({
     type: 'crainer',
-    speed: 99,
+    speed: 90,
     direction: 'vertical',
     boundary: {
       top: 64,
@@ -84,7 +110,7 @@ function createEnemiesLevel1(level1) {
 
   enemies.push({
     type: 'crainer',
-    speed: 99,
+    speed: 90,
     direction: 'horizontal',
     boundary: {
       left: 64,
@@ -98,7 +124,7 @@ function createEnemiesLevel1(level1) {
 
   enemies.push({
     type: 'crainer',
-    speed: 99,
+    speed: 90,
     direction: 'horizontal',
     boundary: {
       left: 64*7,
@@ -112,7 +138,7 @@ function createEnemiesLevel1(level1) {
 
   enemies.push({
     type: 'evil',
-    speed: 99,
+    speed: 90,
     direction: 'horizontal',
     boundary: {
       left: 64,
@@ -128,7 +154,7 @@ function createEnemiesLevel1(level1) {
 
   enemies.push({
     type: 'crainer',
-    speed: 99,
+    speed: 90,
     direction: 'horizontal',
     boundary: {
       left: 64*4,
@@ -156,11 +182,44 @@ function createEnemiesLevel1(level1) {
   level1.enemies = enemies;
 }
 
+function createEnemiesLevel2(level2) {
+  var enemies = [];
+
+  enemies.push({
+    type: 'crainer',
+    speed: 200,
+    direction: 'vertical',
+    boundary: {
+      top: 64+16,
+      bottom: 64*7-16,
+    },
+    start: {
+      x: 64*3+16,
+      y: 64*3-16,
+    },
+  });
+
+  enemies.forEach(
+    function(enemy) {
+      enemy.sprite = game.add.sprite(enemy.start.x, enemy.start.y, enemy.type);
+      game.physics.arcade.enable(enemy.sprite);
+      if (enemy.direction === 'horizontal') {
+        enemy.sprite.body.velocity.x = enemy.speed;
+      }
+      if (enemy.direction === 'vertical') {
+        enemy.sprite.body.velocity.y = enemy.speed;
+      }
+    }
+  );
+
+  level2.enemies = enemies;
+}
+
 function create() {
 
   gameWidth = game.world.width;
   gameHeight = game.world.height;
-  
+
   createLevels();
 
   player = game.add.sprite(playerStart.x, playerStart.y, 'player');
