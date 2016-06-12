@@ -8,6 +8,7 @@ var game = new Phaser.Game(
 
 var levels = [];
 var currentLevel;
+var currentLevelId;
 
 function createLevelData() {
 
@@ -121,10 +122,10 @@ function createLevelData() {
   level.collisionIds = [1,3,4];
 
   level.endTile = {
-  x:64*8,
-  y:64*1,
-  id:'endTile'
-  }
+    x:64*8,
+    y:64*1,
+    id:'endTile'
+  };
 
   level.playerStart = {
     x:64,
@@ -148,27 +149,36 @@ function createLevelData() {
   });
 
   level.enemies = enemies;
-
   levels.push(level);
+}
+
+function goToNextLevel() {
+  // Increase current level by 1
+  currentLevelId = currentLevelId + 1;
+  // if current level is greater than maximum level id
+  // then set current level id to 0
+
+  if (currentLevelId > 1){
+    currentLevelId = 0;
+  }
+  startCurrentLevel();
 
 }
 
-
-function startLevel(levelId) {
-
+function startCurrentLevel() {
   game.world.removeAll();
 
-  var level = levels[levelId];
-
-  player = game.add.sprite(level.playerStart.x, level.playerStart.y, 'player');
-  game.physics.arcade.enable(player);
-  player.body.collideWorldBounds = true;
+  var level = levels[currentLevelId];
 
   level.map = game.add.tilemap(level.tilemapId);
   level.map.addTilesetImage(level.tilesetImage, level.tilesetImage);
 
   level.layer = level.map.createLayer(level.layerId);
   level.layer.resizeWorld();
+
+  player = game.add.sprite(level.playerStart.x, level.playerStart.y, 'player');
+  game.physics.arcade.enable(player);
+  player.body.collideWorldBounds = true;
 
   level.map.setCollision(level.collisionIds);
 
@@ -223,7 +233,8 @@ function create() {
 
   createLevelData();
 
-  startLevel(0);
+  currentLevelId = 0;
+  startCurrentLevel();
 
   cursors = game.input.keyboard.createCursorKeys();
 
@@ -237,8 +248,9 @@ function enemyCollisionHandler (player, enemy) {
 
 function portalCollisionHandler (player, endTile) {
   console.log('(confetti)');
-  player.body.x = currentLevel.playerStart.x;
-  player.body.y = currentLevel.playerStart.y;
+  //player.body.x = currentLevel.playerStart.x;
+  //player.body.y = currentLevel.playerStart.y;
+  goToNextLevel();
 }
 
 function checkCollisions(level) {
