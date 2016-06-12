@@ -158,17 +158,25 @@ function goToNextLevel() {
   // if current level is greater than maximum level id
   // then set current level id to 0
 
-  if (currentLevelId > 1){
-    currentLevelId = 0;
+  if (currentLevelId < levels.length) {
+    currentLevel = levels[currentLevelId];
+    startCurrentLevel();
+  } else {
+    currentLevel = null;
+    showWin();
   }
-  startCurrentLevel();
 
+}
+
+function showWin() {
+  game.world.removeAll();
+  game.add.sprite(0, 0, 'winScreen');
 }
 
 function startCurrentLevel() {
   game.world.removeAll();
 
-  var level = levels[currentLevelId];
+  var level = currentLevel;
 
   level.map = game.add.tilemap(level.tilemapId);
   level.map.addTilesetImage(level.tilesetImage, level.tilesetImage);
@@ -212,7 +220,7 @@ function preload() {
   game.load.tilemap('level2', 'assets/levels/level2.json', null, Phaser.Tilemap.TILED_JSON);
   game.load.image('tiles', 'assets/tiles/tiles.png');
   game.load.image('endTile', 'assets/entities/tiles/gold.png');
-
+  game.load.image('winScreen', 'assets/misc/youwin.jpg');
 }
 
 var PLAYER_SPEED = 95;
@@ -234,6 +242,7 @@ function create() {
   createLevelData();
 
   currentLevelId = 0;
+  currentLevel = levels[currentLevelId];
   startCurrentLevel();
 
   cursors = game.input.keyboard.createCursorKeys();
@@ -248,8 +257,6 @@ function enemyCollisionHandler (player, enemy) {
 
 function portalCollisionHandler (player, endTile) {
   console.log('(confetti)');
-  //player.body.x = currentLevel.playerStart.x;
-  //player.body.y = currentLevel.playerStart.y;
   goToNextLevel();
 }
 
@@ -313,8 +320,9 @@ function updateEnemies(level) {
 
 
 function update() {
-
-  updatePlayer();
-  updateEnemies(currentLevel);
-  checkCollisions(currentLevel);
+  if (currentLevel) {
+    updatePlayer();
+    updateEnemies(currentLevel);
+    checkCollisions(currentLevel);
+  }
 }
