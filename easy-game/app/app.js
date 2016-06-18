@@ -170,7 +170,12 @@ function goToNextLevel() {
 
 function showWin() {
   game.world.removeAll();
-  game.add.sprite(0, 0, 'winScreen');
+  game.add.button(0, 0, 'winScreen', showStart);
+}
+
+function showStart() {
+  game.world.removeAll();
+  game.add.button(0, 0, 'startScreen', startPlaying);
 }
 
 function startCurrentLevel() {
@@ -221,6 +226,7 @@ function preload() {
   game.load.image('tiles', 'assets/tiles/tiles.png');
   game.load.image('endTile', 'assets/entities/tiles/gold.png');
   game.load.image('winScreen', 'assets/misc/youwin.jpg');
+  game.load.image('startScreen', 'assets/misc/startscreen.jpg');
 }
 
 var PLAYER_SPEED = 95;
@@ -241,11 +247,15 @@ function create() {
 
   createLevelData();
 
+  cursors = game.input.keyboard.createCursorKeys();
+  showStart();
+}
+
+function startPlaying() {
+
   currentLevelId = 0;
   currentLevel = levels[currentLevelId];
   startCurrentLevel();
-
-  cursors = game.input.keyboard.createCursorKeys();
 
 }
 
