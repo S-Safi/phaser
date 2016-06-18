@@ -42,7 +42,7 @@ function createLevelData() {
     direction: 'vertical',
     boundary: {
       top: 64,
-      bottom: 64*7,
+      bottom: 64*6,
     },
     start: {
       x: 64*2-16,
@@ -67,30 +67,28 @@ function createLevelData() {
   enemies.push({
     type: 'crainer',
     speed: 90,
-    direction: 'horizontal',
+    direction: 'vertical',
     boundary: {
-      left: 64*7,
-      right: 64*9,
+      top:64,
+      bottom:64*6,
     },
     start: {
-      x: 64*7,
-      y: 64 + 16,
+      x: 64*7+16,
+      y: 64*6,
     },
   });
 
   enemies.push({
-    type: 'evil',
-    speed: 90,
-    direction: 'horizontal',
+    type: 'crainer',
+    speed: 110,
+    direction: 'vertical',
     boundary: {
-      left: 64,
-      right: 64*9,
       top:64,
-      bottom:64*9,
+      bottom:64*6,
     },
     start: {
-      x: 64*7,
-      y: 64*4,
+      x: 64*8+16,
+      y: 64*3,
     },
   });
 
@@ -148,9 +146,70 @@ function createLevelData() {
     },
   });
 
+  enemies.push({
+    type: 'crainer',
+    speed: 85,
+    direction: 'vertical',
+    boundary: {
+      top: 64+16,
+      bottom: 64*7-16,
+    },
+    start: {
+      x: 64*7+16,
+      y: 64*2+16,
+    },
+  });
+
+  enemies.push({
+    type: 'crainer',
+    speed: 85,
+    direction: 'vertical',
+    boundary: {
+      top: 64+16,
+      bottom: 64*7-16,
+    },
+    start: {
+      x: 64*7+16,
+      y: 64*7-16,
+    },
+  });
+
+  enemies.push({
+    type: 'crainer',
+    speed: 85,
+    direction: 'vertical',
+    boundary: {
+      top: 64+16,
+      bottom: 64*7-16,
+    },
+    start: {
+      x: 64*5+16,
+      y: 64*7-16,
+    },
+  });
+
   level.enemies = enemies;
   levels.push(level);
 }
+
+// level 3
+
+  level = {};
+
+  level.tilemapId = 'level3';
+  level.tilesetImage = 'tiles';
+  level.layerId = 'Tile Layer 1';
+  level.collisionIds = [1,3,4];
+
+  level.endTile = {
+      x:64*9,
+      y:64*7,
+      id:'endTile',
+  };
+  level.playerStart = {
+    x:64,
+    y:64,
+  };
 
 function goToNextLevel() {
   // Increase current level by 1
@@ -223,6 +282,7 @@ function preload() {
 
   game.load.tilemap('level1', 'assets/levels/level1.json', null, Phaser.Tilemap.TILED_JSON);
   game.load.tilemap('level2', 'assets/levels/level2.json', null, Phaser.Tilemap.TILED_JSON);
+  game.load.tilemap('level3', 'assets/levels/level3.json', null, Phaser.Tilemap.TILED_JSON);
   game.load.image('tiles', 'assets/tiles/tiles.png');
   game.load.image('endTile', 'assets/entities/tiles/gold.png');
   game.load.image('winScreen', 'assets/misc/youwin.jpg');
