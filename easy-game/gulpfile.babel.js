@@ -1,5 +1,3 @@
-'use strict';
-
 import gulp from 'gulp';
 import gutil from 'gulp-util';
 import webpack from 'webpack';
@@ -8,11 +6,11 @@ import clean from 'gulp-clean';
 import merge from 'gulp-merge';
 import webpackConfig from './webpack.config.js';
 
-gulp.task('clean', () => {
-	return gulp
+gulp.task('clean', () =>
+	gulp
 		.src('./build')
-		.pipe(clean());
-});
+		.pipe(clean())
+);
 
 gulp.task('copy', ['clean'], () => {
   const index = gulp
@@ -21,84 +19,78 @@ gulp.task('copy', ['clean'], () => {
   const assets = gulp
     .src('./src/assets/**/*')
     .pipe(gulp.dest('./build/assets'));
-	return merge(index, assets);
+  return merge(index, assets);
 });
 
 gulp.task('build:prod', ['clean', 'copy'], (callback) => {
+  const config = Object.create(webpackConfig);
+  config.plugins = [
+    new webpack.optimize.DedupePlugin(),
+    new webpack.optimize.UglifyJsPlugin(),
+  ];
 
-	const config = Object.create(webpackConfig);
-	config.plugins = [
-		new webpack.optimize.DedupePlugin(),
-		new webpack.optimize.UglifyJsPlugin(),
-	];
+  const compiler = webpack(config);
 
-	const compiler = webpack(config);
-
-	compiler.run((err, stats) => {
-
-		if (err) {
-			throw new gutil.PluginError('webpack:build:prod', err);
-		}
-
-		gutil.log('[webpack:build:prod]', stats.toString({
-			colors: true,
-		}));
-
-		callback();
-
-	});
-
+  compiler.run((err, stats) => {
+    if (err) {
+      throw new gutil.PluginError('webpack:build:prod', err);
+    }
+    gutil.log('[webpack:build:prod]', stats.toString({
+      colors: true,
+    }));
+    callback();
+  });
 });
 
 gulp.task('build:dev', ['clean', 'copy'], (callback) => {
 
-	const config = Object.create(webpackConfig);
-	config.devtool = 'sourcemap'; // What's this?
-	config.debug = true;
+  const config = Object.create(webpackConfig);
+  config.devtool = 'sourcemap'; // What's this?
+  config.debug = true;
 
-	const compiler = webpack(config);
+  const compiler = webpack(config);
 
-	compiler.run((err, stats) => {
+  compiler.run((err, stats) => {
 
-		if (err) {
-			throw new gutil.PluginError('webpack:build:dev', err);
-		}
+    if (err) {
+      throw new gutil.PluginError('webpack:build:dev', err);
+    }
 
-		gutil.log('[webpack:build:dev]', stats.toString({
-			colors: true
-		}));
+    gutil.log('[webpack:build:dev]', stats.toString({
+      colors: true,
+    }));
 
-		callback();
+    callback();
 
-	});
+  });
 
 });
 
 gulp.task('serve', (callback) => {
 
-	const config = Object.create(webpackConfig);
-	config.devtool = 'eval';
-	config.debug = true;
+  const config = Object.create(webpackConfig);
+  config.devtool = 'eval';
+  config.debug = true;
 
-	const compiler = webpack(config);
+  const compiler = webpack(config);
 
-	const devServerConfig = {
-		contentBase: 'build/',
-		publicPath: '/' + config.output.publicPath,
-	};
+  const devServerConfig = {
+    contentBase: 'build/',
+    publicPath: `/${config.output.publicPath}`,
+  };
 
   new WebpackDevServer(compiler, devServerConfig)
-		.listen(8080, 'localhost', (err) => {
+    .listen(8080, 'localhost', (err) => {
 
       if (err) {
-				throw new gutil.PluginError('webpack-dev-server', err);
-			}
+        throw new gutil.PluginError('webpack-dev-server', err);
+      }
 
       gutil.log('[webpack:serve]', 'http://localhost:8080/');
 
       callback();
 
-  	}
-	);
+    }
+  );
 
 });
