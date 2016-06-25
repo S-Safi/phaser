@@ -1,3 +1,5 @@
+import 'phaser-shim';
+
 var game = new Phaser.Game(
   640,
   512,
@@ -236,9 +238,6 @@ var player;
 var gameWidth;
 var gameHeight;
 var cursors;
-var map;
-var layer;
-var endTile;
 
 function create() {
 
