@@ -8,7 +8,7 @@ import webpackConfig from './webpack.config.js';
 
 gulp.task('clean', () =>
 	gulp
-		.src('./build')
+		.src('./build', { read: false })
 		.pipe(clean())
 );
 
@@ -22,7 +22,7 @@ gulp.task('copy', ['clean'], () => {
   return merge(index, assets);
 });
 
-gulp.task('build:prod', ['clean', 'copy'], (callback) => {
+gulp.task('build:prod', ['copy'], (callback) => {
   const config = Object.create(webpackConfig);
   config.plugins = [
     new webpack.optimize.DedupePlugin(),
@@ -42,7 +42,7 @@ gulp.task('build:prod', ['clean', 'copy'], (callback) => {
   });
 });
 
-gulp.task('build:dev', ['clean', 'copy'], (callback) => {
+gulp.task('build:dev', ['copy'], (callback) => {
 
   const config = Object.create(webpackConfig);
   config.devtool = 'sourcemap'; // What's this?
@@ -66,7 +66,7 @@ gulp.task('build:dev', ['clean', 'copy'], (callback) => {
 
 });
 
-gulp.task('serve', (callback) => {
+gulp.task('serve', ['copy'], (callback) => {
 
   const config = Object.create(webpackConfig);
   config.devtool = 'eval';

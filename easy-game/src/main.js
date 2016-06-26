@@ -1,26 +1,21 @@
 import 'phaser-shim';
 
-const game = new Phaser.Game(
+var game = new Phaser.Game(
   640,
   512,
   Phaser.AUTO,
   '',
-  { preload, create, update }
+  { preload: preload, create: create, update: update }
 );
 
-
-const PLAYER_SPEED = 95;
-
-const levels = [];
-let currentLevel;
-let currentLevelId;
-let player;
-let cursors;
+var levels = [];
+var currentLevel;
+var currentLevelId;
 
 function createLevelData() {
 
-  let level;
-  let enemies;
+  var level;
+  var enemies;
 
   // Level 1
 
@@ -29,16 +24,16 @@ function createLevelData() {
   level.tilemapId = 'level1';
   level.tilesetImage = 'tiles';
   level.layerId = 'Tile Layer 1';
-  level.collisionIds = [1, 3, 4];
+  level.collisionIds = [1,3,4];
 
   level.endTile = {
-    x: 64 * 5,
-    y: 64 * 3,
-    id: 'endTile',
+      x:64*5,
+      y:64*3,
+      id:'endTile',
   };
   level.playerStart = {
-    x: 64,
-    y: 64,
+    x:64,
+    y:64,
   };
 
   enemies = [];
@@ -49,11 +44,11 @@ function createLevelData() {
     direction: 'vertical',
     boundary: {
       top: 64,
-      bottom: 64 * 7,
+      bottom: 64*6,
     },
     start: {
-      x: 64 * 2 - 16,
-      y: 64 * 3 - 16,
+      x: 64*2-16,
+      y: 64*3-16,
     },
   });
 
@@ -63,11 +58,39 @@ function createLevelData() {
     direction: 'horizontal',
     boundary: {
       left: 64,
-      right: 64 * 9,
+      right: 64*9,
     },
     start: {
-      x: 64 * 5 - 16,
-      y: 64 * 6 + 16,
+      x: 64*5-16,
+      y: 64*6+16,
+    },
+  });
+
+  enemies.push({
+    type: 'crainer',
+    speed: 90,
+    direction: 'vertical',
+    boundary: {
+      top:64,
+      bottom:64*6,
+    },
+    start: {
+      x: 64*7+16,
+      y: 64*6,
+    },
+  });
+
+  enemies.push({
+    type: 'crainer',
+    speed: 110,
+    direction: 'vertical',
+    boundary: {
+      top:64,
+      bottom:64*6,
+    },
+    start: {
+      x: 64*8+16,
+      y: 64*3,
     },
   });
 
@@ -76,41 +99,11 @@ function createLevelData() {
     speed: 90,
     direction: 'horizontal',
     boundary: {
-      left: 64 * 7,
-      right: 64 * 9,
+      left: 64*4,
+      right: 64*6,
     },
     start: {
-      x: 64 * 7,
-      y: 64 + 16,
-    },
-  });
-
-  enemies.push({
-    type: 'evil',
-    speed: 90,
-    direction: 'horizontal',
-    boundary: {
-      left: 64,
-      right: 64 * 9,
-      top: 64,
-      bottom: 64 * 9,
-    },
-    start: {
-      x: 64 * 7,
-      y: 64 * 4,
-    },
-  });
-
-  enemies.push({
-    type: 'crainer',
-    speed: 90,
-    direction: 'horizontal',
-    boundary: {
-      left: 64 * 4,
-      right: 64 * 6,
-    },
-    start: {
-      x: 64 * 4,
+      x: 64*4,
       y: 64 + 16,
     },
   });
@@ -126,17 +119,17 @@ function createLevelData() {
   level.tilemapId = 'level2';
   level.tilesetImage = 'tiles';
   level.layerId = 'Tile Layer 1';
-  level.collisionIds = [1, 3, 4];
+  level.collisionIds = [1,3,4];
 
   level.endTile = {
-    x: 64 * 8,
-    y: 64 * 1,
-    id: 'endTile',
+    x:64*8,
+    y:64*1,
+    id:'endTile'
   };
 
   level.playerStart = {
-    x: 64,
-    y: 64,
+    x:64,
+    y:64,
   };
 
   enemies = [];
@@ -146,75 +139,79 @@ function createLevelData() {
     speed: 200,
     direction: 'vertical',
     boundary: {
-      top: 64 + 16,
-      bottom: 64 * 7 - 16,
+      top: 64+16,
+      bottom: 64*7-16,
     },
     start: {
-      x: 64 * 3 + 16,
-      y: 64 * 3 - 16,
+      x: 64*3+16,
+      y: 64*3-16,
+    },
+  });
+
+  enemies.push({
+    type: 'crainer',
+    speed: 85,
+    direction: 'vertical',
+    boundary: {
+      top: 64+16,
+      bottom: 64*7-16,
+    },
+    start: {
+      x: 64*7+16,
+      y: 64*2+16,
+    },
+  });
+
+  enemies.push({
+    type: 'crainer',
+    speed: 55,
+    direction: 'vertical',
+    boundary: {
+      top: 64+16,
+      bottom: 64*7-16,
+    },
+    start: {
+      x: 64*7+16,
+      y: 64*7-16,
+    },
+  });
+
+  enemies.push({
+    type: 'crainer',
+    speed: 105,
+    direction: 'vertical',
+    boundary: {
+      top: 64+16,
+      bottom: 64*7-16,
+    },
+    start: {
+      x: 64*5+16,
+      y: 64*7-16,
     },
   });
 
   level.enemies = enemies;
   levels.push(level);
-}
 
-function startCurrentLevel() {
-  game.world.removeAll();
+  // level 3
 
-  const level = currentLevel;
+  level = {};
 
-  level.map = game.add.tilemap(level.tilemapId);
-  level.map.addTilesetImage(level.tilesetImage, level.tilesetImage);
+  level.tilemapId = 'level3';
+  level.tilesetImage = 'tiles';
+  level.layerId = 'Tile Layer 1';
+  level.collisionIds = [1,3,4];
 
-  level.layer = level.map.createLayer(level.layerId);
-  level.layer.resizeWorld();
+  level.endTile = {
+      x:64*9,
+      y:64*7,
+      id:'endTile',
+  };
+  level.playerStart = {
+    x:64,
+    y:64,
+  };
 
-  player = game.add.sprite(level.playerStart.x, level.playerStart.y, 'player');
-  game.physics.arcade.enable(player);
-  player.body.collideWorldBounds = true;
-
-  level.map.setCollision(level.collisionIds);
-
-  level.enemies.forEach(
-    (enemy) => {
-      enemy.sprite = game.add.sprite( // eslint-disable-line no-param-reassign
-        enemy.start.x,
-        enemy.start.y,
-        enemy.type
-      );
-      game.physics.arcade.enable(enemy.sprite);
-      if (enemy.direction === 'horizontal') {
-        enemy.sprite.body.velocity.x = enemy.speed; // eslint-disable-line no-param-reassign
-      }
-      if (enemy.direction === 'vertical') {
-        enemy.sprite.body.velocity.y = enemy.speed; // eslint-disable-line no-param-reassign
-      }
-    }
-  );
-
-  level.endTile.sprite = game.add.sprite(level.endTile.x, level.endTile.y, level.endTile.id);
-
-  game.physics.arcade.enable(level.endTile.sprite);
-
-  currentLevel = level;
-
-}
-
-function startPlaying() {
-  currentLevelId = 0;
-  currentLevel = levels[currentLevelId];
-  startCurrentLevel();
-}
-
-function showStart() {
-  game.world.removeAll();
-  game.add.button(0, 0, 'startScreen', startPlaying);
-}
-
-function showWin() {
-  game.world.removeAll();
-  game.add.button(0, 0, 'winScreen', showStart);
 }
 
 function goToNextLevel() {
@@ -233,32 +230,105 @@ function goToNextLevel() {
 
 }
 
+function showWin() {
+  game.world.removeAll();
+  game.add.button(0, 0, 'winScreen', showStart);
+}
+
+function showStart() {
+  game.world.removeAll();
+  game.add.button(0, 0, 'startScreen', startPlaying);
+}
+
+function startCurrentLevel() {
+  game.world.removeAll();
+
+  var level = currentLevel;
+
+  level.map = game.add.tilemap(level.tilemapId);
+  level.map.addTilesetImage(level.tilesetImage, level.tilesetImage);
+
+  level.layer = level.map.createLayer(level.layerId);
+  level.layer.resizeWorld();
+
+  player = game.add.sprite(level.playerStart.x, level.playerStart.y, 'player');
+  game.physics.arcade.enable(player);
+  player.body.collideWorldBounds = true;
+
+  level.map.setCollision(level.collisionIds);
+
+  level.enemies.forEach(
+    function(enemy) {
+      enemy.sprite = game.add.sprite(enemy.start.x, enemy.start.y, enemy.type);
+      game.physics.arcade.enable(enemy.sprite);
+      if (enemy.direction === 'horizontal') {
+        enemy.sprite.body.velocity.x = enemy.speed;
+      }
+      if (enemy.direction === 'vertical') {
+        enemy.sprite.body.velocity.y = enemy.speed;
+      }
+    }
+  );
+
+  level.endTile.sprite = game.add.sprite(level.endTile.x, level.endTile.y, level.endTile.id);
+
+  game.physics.arcade.enable(level.endTile.sprite);
+
+  currentLevel = level;
+
+}
+
 function preload() {
   game.load.image('player', 'assets/entities/player/derp-ssundee.png');
-  game.load.image('crainer', 'assets/entities/enemies/crainer.png');
-  game.load.image('evil', 'assets/entities/enemies/enemy-evil.jpg');
+  game.load.image('crainer','assets/entities/enemies/crainer.png');
+  game.load.image('evil','assets/entities/enemies/enemy-evil.jpg');
 
   game.load.tilemap('level1', 'assets/levels/level1.json', null, Phaser.Tilemap.TILED_JSON);
   game.load.tilemap('level2', 'assets/levels/level2.json', null, Phaser.Tilemap.TILED_JSON);
+  game.load.tilemap('level3', 'assets/levels/level3.json', null, Phaser.Tilemap.TILED_JSON);
   game.load.image('tiles', 'assets/tiles/tiles.png');
   game.load.image('endTile', 'assets/entities/tiles/gold.png');
   game.load.image('winScreen', 'assets/misc/youwin.jpg');
   game.load.image('startScreen', 'assets/misc/startscreen.jpg');
 }
 
+var PLAYER_SPEED = 95;
+
+var player;
+
+var gameWidth;
+var gameHeight;
+var cursors;
+var map;
+var layer;
+var endTile;
+
 function create() {
+
+  gameWidth = game.world.width;
+  gameHeight = game.world.height;
+
   createLevelData();
+
   cursors = game.input.keyboard.createCursorKeys();
   showStart();
 }
 
-function enemyCollisionHandler(thePlayer /* , enemy */) {
-  console.log('CRASH');
-  thePlayer.body.x = currentLevel.playerStart.x; // eslint-disable-line no-param-reassign
-  thePlayer.body.y = currentLevel.playerStart.y; // eslint-disable-line no-param-reassign
+function startPlaying() {
+
+  currentLevelId = 0;
+  currentLevel = levels[currentLevelId];
+  startCurrentLevel();
+
 }
 
-function portalCollisionHandler(/* thePlayer  , endTile */) {
+function enemyCollisionHandler (player, enemy) {
+  console.log('CRASH');
+  player.body.x = currentLevel.playerStart.x;
+  player.body.y = currentLevel.playerStart.y;
+}
+
+function portalCollisionHandler (player, endTile) {
   console.log('(confetti)');
   goToNextLevel();
 }
@@ -266,45 +336,59 @@ function portalCollisionHandler(/* thePlayer  , endTile */) {
 function checkCollisions(level) {
   game.physics.arcade.collide(player, level.layer);
   game.physics.arcade.overlap(player, level.endTile.sprite, portalCollisionHandler, null, this);
-  level.enemies.forEach((enemy) => {
-    game.physics.arcade.overlap(player, enemy.sprite, enemyCollisionHandler, null, this);
-  });
+  level.enemies.forEach(
+    function (enemy) {
+      game.physics.arcade.overlap(player, enemy.sprite, enemyCollisionHandler, null, this);
+    }
+  );
+
 }
 
 function updatePlayer() {
   if (cursors.left.isDown) {
     player.body.velocity.x = -PLAYER_SPEED;
-  } else if (cursors.right.isDown) {
+  }
+  else if (cursors.right.isDown) {
     player.body.velocity.x = PLAYER_SPEED;
-  } else {
+  }
+  else {
     player.body.velocity.x = 0;
   }
+
   if (cursors.up.isDown) {
     player.body.velocity.y = -PLAYER_SPEED;
-  } else if (cursors.down.isDown) {
+  }
+  else if (cursors.down.isDown) {
     player.body.velocity.y = PLAYER_SPEED;
-  } else {
+  }
+  else {
     player.body.velocity.y = 0;
   }
+
 }
 
 function updateEnemies(level) {
-  level.enemies.forEach((enemy) => {
-    if (enemy.direction === 'vertical') {
-      if (enemy.sprite.body.y >= (enemy.boundary.bottom - enemy.sprite.height)) {
-        enemy.sprite.body.velocity.y = -enemy.speed;
-      } else if (enemy.sprite.body.y <= enemy.boundary.top) {
-        enemy.sprite.body.velocity.y = enemy.speed;
+
+  level.enemies.forEach(
+    function (enemy) {
+      if (enemy.direction === 'vertical') {
+        if (enemy.sprite.body.y >= (enemy.boundary.bottom - enemy.sprite.height)) {
+          enemy.sprite.body.velocity.y = -enemy.speed;
+        }
+        else if (enemy.sprite.body.y <= enemy.boundary.top) {
+          enemy.sprite.body.velocity.y = enemy.speed;
+        }
+      }
+      if (enemy.direction === 'horizontal') {
+        if (enemy.sprite.body.x >= (enemy.boundary.right - enemy.sprite.width)) {
+          enemy.sprite.body.velocity.x = -enemy.speed;
+        }
+        else if (enemy.sprite.body.x <= enemy.boundary.left) {
+          enemy.sprite.body.velocity.x = enemy.speed;
+        }
       }
     }
-    if (enemy.direction === 'horizontal') {
-      if (enemy.sprite.body.x >= (enemy.boundary.right - enemy.sprite.width)) {
-        enemy.sprite.body.velocity.x = -enemy.speed;
-      } else if (enemy.sprite.body.x <= enemy.boundary.left) {
-        enemy.sprite.body.velocity.x = enemy.speed;
-      }
-    }
-  });
+  );
 }
 
 
