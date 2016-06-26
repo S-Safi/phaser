@@ -17,6 +17,7 @@
     "eslint-plugin-import": "^1.9.2",
     "gulp": "^3.9.1",
     "gulp-clean": "^0.3.2",
+    "gulp-eslint": "^2.0.0",
     "gulp-merge": "^0.1.1",
     "gulp-util": "^3.0.7",
     "phaser": "^2.5.0",

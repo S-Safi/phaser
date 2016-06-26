@@ -4,6 +4,7 @@ import webpack from 'webpack';
 import WebpackDevServer from 'webpack-dev-server';
 import clean from 'gulp-clean';
 import merge from 'gulp-merge';
+import eslint from 'gulp-eslint';
 import webpackConfig from './webpack.config.js';
 
 gulp.task('clean', () =>
@@ -12,7 +13,15 @@ gulp.task('clean', () =>
 		.pipe(clean())
 );
 
-gulp.task('copy', ['clean'], () => {
+gulp.task('lint', () =>
+	gulp
+		.src('./src/**/*.js')
+		.pipe(eslint())
+		.pipe(eslint.format())
+		.pipe(eslint.failAfterError())
+);
+
+gulp.task('copy', ['clean', 'lint'], () => {
   const index = gulp
 		.src('./src/index.html')
     .pipe(gulp.dest('./build'));
