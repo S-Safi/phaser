@@ -30,7 +30,6 @@
   "eslintConfig": {
     "extends": "airbnb-base",
     "rules": {
-      "padded-blocks": 0
     },
     "globals": {
       "Phaser": true
