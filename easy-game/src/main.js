@@ -217,6 +217,43 @@ function createLevelData() {
   };
 }
 
+function startCurrentLevel() {
+  const level = currentLevel;
+  game.world.removeAll();
+
+  level.map = game.add.tilemap(level.tilemapId);
+  level.map.addTilesetImage(level.tilesetImage, level.tilesetImage);
+
+  level.layer = level.map.createLayer(level.layerId);
+  level.layer.resizeWorld();
+
+  player = game.add.sprite(level.playerStart.x, level.playerStart.y, 'player');
+  game.physics.arcade.enable(player);
+  player.body.collideWorldBounds = true;
+
+  level.map.setCollision(level.collisionIds);
+
+  level.enemies.forEach(
+    (enemy) => {
+      const sprite = game.add.sprite(enemy.start.x, enemy.start.y, enemy.type);
+      if (enemy.direction === 'horizontal') {
+        sprite.body.velocity.x = enemy.speed;
+      }
+      if (enemy.direction === 'vertical') {
+        sprite.body.velocity.y = enemy.speed;
+      }
+      enemy.sprite = sprite;
+      game.physics.arcade.enable(enemy.sprite);
+    }
+  );
+
+  level.endTile.sprite = game.add.sprite(level.endTile.x, level.endTile.y, level.endTile.id);
+
+  game.physics.arcade.enable(level.endTile.sprite);
+
+  currentLevel = level;
+}
+
 function goToNextLevel() {
   // Increase current level by 1
   currentLevelId = currentLevelId + 1;
@@ -240,43 +277,6 @@ function showWin() {
 function showStart() {
   game.world.removeAll();
   game.add.button(0, 0, 'startScreen', startPlaying);
-}
-
-function startCurrentLevel() {
-  const level = currentLevel;
-  game.world.removeAll();
-
-
-  level.map = game.add.tilemap(level.tilemapId);
-  level.map.addTilesetImage(level.tilesetImage, level.tilesetImage);
-
-  level.layer = level.map.createLayer(level.layerId);
-  level.layer.resizeWorld();
-
-  player = game.add.sprite(level.playerStart.x, level.playerStart.y, 'player');
-  game.physics.arcade.enable(player);
-  player.body.collideWorldBounds = true;
-
-  level.map.setCollision(level.collisionIds);
-
-  level.enemies.forEach(
-    (enemy) => {
-      enemy.sprite = game.add.sprite(enemy.start.x, enemy.start.y, enemy.type);
-      game.physics.arcade.enable(enemy.sprite);
-      if (enemy.direction === 'horizontal') {
-        enemy.sprite.body.velocity.x = enemy.speed;
-      }
-      if (enemy.direction === 'vertical') {
-        enemy.sprite.body.velocity.y = enemy.speed;
-      }
-    }
-  );
-
-  level.endTile.sprite = game.add.sprite(level.endTile.x, level.endTile.y, level.endTile.id);
-
-  game.physics.arcade.enable(level.endTile.sprite);
-
-  currentLevel = level;
 }
 
 function preload() {
@@ -306,12 +306,12 @@ function startPlaying() {
   startCurrentLevel();
 }
 
-function enemyCollisionHandler(player, enemy) {
+function enemyCollisionHandler() {
   player.body.x = currentLevel.playerStart.x;
   player.body.y = currentLevel.playerStart.y;
 }
 
-function portalCollisionHandler(player, endTile) {
+function portalCollisionHandler() {
   goToNextLevel();
 }
 
