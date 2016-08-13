@@ -254,19 +254,15 @@ function startCurrentLevel() {
   currentLevel = level;
 }
 
-function goToNextLevel() {
-  // Increase current level by 1
-  currentLevelId = currentLevelId + 1;
-  // if current level is greater than maximum level id
-  // then set current level id to 0
+function startPlaying() {
+  currentLevelId = 0;
+  currentLevel = levels[currentLevelId];
+  startCurrentLevel();
+}
 
-  if (currentLevelId < levels.length) {
-    currentLevel = levels[currentLevelId];
-    startCurrentLevel();
-  } else {
-    currentLevel = null;
-    showWin();
-  }
+function showStart() {
+  game.world.removeAll();
+  game.add.button(0, 0, 'startScreen', startPlaying);
 }
 
 function showWin() {
@@ -274,9 +270,18 @@ function showWin() {
   game.add.button(0, 0, 'winScreen', showStart);
 }
 
-function showStart() {
-  game.world.removeAll();
-  game.add.button(0, 0, 'startScreen', startPlaying);
+function goToNextLevel() {
+  // Increase current level by 1
+  currentLevelId = currentLevelId + 1;
+  // if current level is greater than maximum level id
+  // then set current level id to 0
+  if (currentLevelId < levels.length) {
+    currentLevel = levels[currentLevelId];
+    startCurrentLevel();
+  } else {
+    currentLevel = null;
+    showWin();
+  }
 }
 
 function preload() {
@@ -298,12 +303,6 @@ function create() {
 
   cursors = game.input.keyboard.createCursorKeys();
   showStart();
-}
-
-function startPlaying() {
-  currentLevelId = 0;
-  currentLevel = levels[currentLevelId];
-  startCurrentLevel();
 }
 
 function enemyCollisionHandler() {
