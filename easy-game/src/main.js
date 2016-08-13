@@ -232,20 +232,21 @@ function startCurrentLevel() {
 
   level.map.setCollision(level.collisionIds);
 
-  level.enemies.forEach(
-    (enemy) => {
-      const sprite = game.add.sprite(enemy.start.x, enemy.start.y, enemy.type);
-      game.physics.arcade.enable(sprite);
-      if (enemy.direction === 'horizontal') {
-        sprite.body.velocity.x = enemy.speed;
-      }
-      if (enemy.direction === 'vertical') {
-        sprite.body.velocity.y = enemy.speed;
-      }
-      enemy.sprite = sprite;
-      game.physics.arcade.enable(enemy.sprite);
+  level.enemies = level.enemies.map((enemy) => {
+    const sprite = game.add.sprite(enemy.start.x, enemy.start.y, enemy.type);
+    game.physics.arcade.enable(sprite);
+    if (enemy.direction === 'horizontal') {
+      sprite.body.velocity.x = enemy.speed;
     }
-  );
+    if (enemy.direction === 'vertical') {
+      sprite.body.velocity.y = enemy.speed;
+    }
+    const newEnemy = {
+      ...enemy,
+      sprite,
+    };
+    return newEnemy;
+  });
 
   level.endTile.sprite = game.add.sprite(level.endTile.x, level.endTile.y, level.endTile.id);
 
