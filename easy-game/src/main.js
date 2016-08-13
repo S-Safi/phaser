@@ -4,8 +4,7 @@ const game = new Phaser.Game(
   640,
   512,
   Phaser.AUTO,
-  '',
-  { preload, create, update }
+  ''
 );
 
 const levels = [];
@@ -236,6 +235,7 @@ function startCurrentLevel() {
   level.enemies.forEach(
     (enemy) => {
       const sprite = game.add.sprite(enemy.start.x, enemy.start.y, enemy.type);
+      game.physics.arcade.enable(sprite);
       if (enemy.direction === 'horizontal') {
         sprite.body.velocity.x = enemy.speed;
       }
@@ -371,3 +371,8 @@ function update() {
     checkCollisions(currentLevel);
   }
 }
+
+const playState = { preload, create, update };
+
+game.state.add('main', playState);
+game.state.start('main');

@@ -21,7 +21,7 @@ gulp.task('lint', () =>
 		.pipe(eslint.failAfterError())
 );
 
-gulp.task('copy', ['clean', 'lint'], () => {
+gulp.task('copy', ['clean'], () => {
   const index = gulp
 		.src('./src/index.html')
     .pipe(gulp.dest('./build'));
