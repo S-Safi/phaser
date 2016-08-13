@@ -344,22 +344,24 @@ function updatePlayer() {
 }
 
 function updateEnemies(level) {
-  level.enemies.forEach(
+  level.enemies = level.enemies.map(
     (enemy) => {
-      if (enemy.direction === 'vertical') {
-        if (enemy.sprite.body.y >= (enemy.boundary.bottom - enemy.sprite.height)) {
-          enemy.sprite.body.velocity.y = -enemy.speed;
-        } else if (enemy.sprite.body.y <= enemy.boundary.top) {
-          enemy.sprite.body.velocity.y = enemy.speed;
+      const newEnemy = { ...enemy };
+      if (newEnemy.direction === 'vertical') {
+        if (newEnemy.sprite.body.y >= (newEnemy.boundary.bottom - newEnemy.sprite.height)) {
+          newEnemy.sprite.body.velocity.y = -newEnemy.speed;
+        } else if (newEnemy.sprite.body.y <= newEnemy.boundary.top) {
+          newEnemy.sprite.body.velocity.y = newEnemy.speed;
         }
       }
-      if (enemy.direction === 'horizontal') {
-        if (enemy.sprite.body.x >= (enemy.boundary.right - enemy.sprite.width)) {
-          enemy.sprite.body.velocity.x = -enemy.speed;
-        } else if (enemy.sprite.body.x <= enemy.boundary.left) {
-          enemy.sprite.body.velocity.x = enemy.speed;
+      if (newEnemy.direction === 'horizontal') {
+        if (newEnemy.sprite.body.x >= (newEnemy.boundary.right - newEnemy.sprite.width)) {
+          newEnemy.sprite.body.velocity.x = -newEnemy.speed;
+        } else if (newEnemy.sprite.body.x <= newEnemy.boundary.left) {
+          newEnemy.sprite.body.velocity.x = newEnemy.speed;
         }
       }
+      return newEnemy;
     }
   );
 }
