@@ -1,5 +1,9 @@
 import 'phaser-shim';
 
+import hello from './lib/hello';
+
+hello('wIDOJIOA');
+
 const game = new Phaser.Game(
   640,
   512,
