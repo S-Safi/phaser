@@ -344,7 +344,8 @@ function updatePlayer() {
 }
 
 function updateEnemies(level) {
-  level.enemies = level.enemies.map(
+  const newLevel = { ...level };
+  newLevel.enemies = newLevel.enemies.map(
     (enemy) => {
       const newEnemy = { ...enemy };
       if (newEnemy.direction === 'vertical') {
@@ -364,6 +365,7 @@ function updateEnemies(level) {
       return newEnemy;
     }
   );
+  return newLevel;
 }
 
 function update() {
