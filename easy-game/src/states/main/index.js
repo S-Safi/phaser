@@ -1,23 +1,14 @@
-import 'phaser-shim';
 import preload from './preload';
 import create from './create';
 import update from './update';
 
-const game = new Phaser.Game(
-  640,
-  512,
-  Phaser.AUTO,
-  ''
-);
-
-const levels = [];
-let currentLevel;
-let currentLevelId;
+export default {
+  preload,
+  create,
+  update,
+};
 
 // const PLAYER_SPEED = 95;
-
-let player;
-let cursors;
 
 // function createLevelData() {
 //   let level;
@@ -384,11 +375,8 @@ let cursors;
 // const preload = noop;
 // const create = noop;
 
-const playState = {
-  preload: preload(game),
-  create: create(game),
-  update: update(game),
-};
-
-game.state.add('main', playState);
-game.state.start('main');
+// const playState = {
+//   preload: preload(game),
+//   create: create(game),
+//   update: update(game),
+// };
