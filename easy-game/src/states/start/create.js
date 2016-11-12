@@ -7,7 +7,7 @@ function startPlaying() {
 }
 
 function showStart() {
-  game.world.removeAll();
+//  game.world.removeAll();
   game.add.button(0, 0, 'startScreen', startPlaying);
 }
 

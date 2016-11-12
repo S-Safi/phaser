@@ -11,6 +11,4 @@ export default function preload() {
   game.load.tilemap('level3', 'assets/levels/level3.json', null, Phaser.Tilemap.TILED_JSON);
   game.load.image('tiles', 'assets/tiles/tiles.png');
   game.load.image('endTile', 'assets/entities/tiles/gold.png');
-  game.load.image('winScreen', 'assets/misc/youwin.jpg');
-  game.load.image('startScreen', 'assets/misc/startscreen.jpg');
 }

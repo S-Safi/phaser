@@ -48,20 +48,15 @@ function startCurrentLevel() {
   app.currentLevel = level;
 }
 
-function showStart() {
-  game.state.start('start');
-}
-
 function showWin() {
-  game.world.removeAll();
-  game.add.button(0, 0, 'winScreen', showStart);
+  game.state.start('win');
 }
 
 function goToNextLevel() {
   // Increase current level by 1
   app.currentLevelId = app.currentLevelId + 1;
   // if current level is greater than maximum level id
-  // then set current level id to 0
+  // then show the win screen
   if (app.currentLevelId < app.levels.length) {
     app.currentLevel = app.levels[app.currentLevelId];
     startCurrentLevel();
